@@ -1,0 +1,173 @@
+html, body {
+	background: white;
+	font-family: 'Poiret One', cursive;
+	}
+
+.container {
+	max-width: 1080px;
+	}
+
+#active {
+	color: darkred;
+	}
+/* header */
+	
+.header {
+	text-align: center;
+	color: red;
+	border-bottom: red 1px solid;
+	}
+	
+.pull-right {
+	padding-top: 20px;
+	}
+	
+.navbar-right {
+	padding-top: 20px;
+	text-decoration: none;
+	}
+	
+.header li, .footer li {
+	display: inline-block;
+	padding: 0 0px 0 20px;
+	font-size: 20px;
+	font-weight: bold;
+	}
+	
+.header a {
+	color: red;
+	padding: 10px;
+	}
+	
+.header a:hover {
+	text-decoration: none;
+	background: lightgrey;
+	padding: 10px;
+	}
+	
+.header h1 {
+	font-weight: bold;
+	}
+	
+/* menu */
+
+.menu li {
+	display: inline;
+	border-right: 1px red solid;
+	border-left: 1px red solid;
+	padding: 0 50px 0 50px;
+	}
+	
+.menu {
+	text-align: center;
+	margin: 20px 0 0px 0;
+	border-bottom: 1px red solid;
+	font-weight: bold;
+	}
+	
+.menu a {
+	color: red;
+	}
+/* jumbotron */
+
+.jumbotron {
+	color: white;
+	height: 760px;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	}
+
+	
+#city {
+	background:url("../images/cityscape.jpg") center center;
+	background-size: cover;
+	color: white;
+	height: 760px;
+	text-align: center;
+	padding-top: 300px;
+	margin: 0;
+	}
+	
+#explore {
+	background:url("../images/womaninpurple.jpg");
+	background-size: cover;
+	text-align: right;
+	padding-top: 50px;
+	}
+	
+#explore2 {
+	background:url("../images/hut.jpg");
+	background-size: cover;
+	text-align: left;
+	padding-top: 400px;
+	}
+
+#explore3 {
+	background:url("../images/womanfloating.jpg");
+	background-size: cover;
+	text-align: right;
+	padding-top: 560px;
+	}
+	
+/* section */	
+
+
+.section {
+	text-align: center;
+	color: red;
+	border-top: red 1px solid;
+	border-bottom: red 1px solid;
+	padding: 50px 0 50px 0;
+	}
+
+/* main */
+
+.main {
+	text-align: center;
+	}
+	
+#boat {
+	height: 760px;
+	padding-top: 300px;
+	margin:0;
+	background-image:url("../images/boat.jpg");
+	background-size: cover;
+	color: white;
+	text-align: left;
+	}
+
+
+/* carousel */
+
+	
+#carousel-example-generic {
+	max-height: 760px;
+	color: red;
+	}
+	
+.carousel-inner {
+	max-width: 100%;
+	max-height: 760px !important;
+	color: white;
+	}
+	
+.item {
+	max-height: 760px;
+	}
+	
+/* footer */
+.footer {
+	border-top: red 1px solid;
+	}
+	
+.footer .nav {
+	padding-top: 30px;
+	padding-bottom: 20px;
+	color: red;
+	}
+	
+.footer .pull-right {
+	font-weight: bold;
+	color: red;
+	}
