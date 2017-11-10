@@ -1,0 +1,57 @@
+html, body {
+	font-family: 'Raleway', sans-serif;
+	}
+
+.container {
+	max-width: 1060px;
+	}
+
+
+/* header */
+	
+.header .row{
+	text-align: center;
+	border: 1px solid grey;
+	margin: 10px 0 10px 0;
+	color: white;
+	background: midnightblue;
+	}
+	
+.menu  li {
+	display: inline-block;
+	padding: 2px 10px 2px 10px;
+	border-right: white 1px solid;
+	margin: 0;
+	}
+.menu a {
+	color: white;
+	}
+	
+.menu .nav {
+	background: grey;
+	margin-bottom: 10px;
+	}
+	
+.nav ul {
+	margin: 2px;
+	}
+	
+/* main */
+.glyphicon-save {
+	height: 50px;
+	}
+.main .row {
+	margin: 0 0 10px 0;
+	border-bottom: 1px grey solid;
+	color: steelblue;
+	}
+	
+.progress {
+	margin-left: 20px;
+	margin-right: 20px;
+	
+	}
+	
+.panel-default:hover {
+	background: silver;
+	}
