@@ -1,0 +1,103 @@
+body, html {
+	font-family: 'Josefin Sans', sans-serif;
+	background-color: #e6ffe6;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	}
+	
+	
+.container {
+	max-width: 1280px;
+	}
+	
+	
+	
+/* header */
+
+.header, .header a{
+	text-align: center;
+	color: #003300;
+	}
+
+.header li {
+	display: inline-block;
+	font-size: 24px;
+	padding: 20px 20px 0 20px;
+	}	
+
+.menu {
+	text-decoration: none;
+	color: red;
+	}
+	
+	
+/* jumbotron */
+
+.jumbotron {
+	height: 600px;
+	border-top: 3px white solid;
+	border-bottom: 3px white solid;
+	color: #003300;
+	text-align: center;
+	}
+	
+#first {
+	background:url("../images/gogreen.jpg") center center;
+	background-size: cover;
+	}
+	
+#second {
+	background:url("../images/leafwall.jpg") center center;
+	background-size: cover;
+	color: white;
+	padding-top: 200px;
+	}
+	
+#third {
+	background:url("../images/Greenhouse.jpg") center bottom;
+	background-size: cover;
+	color: white;
+	padding-top: 300px;
+	}
+	
+.button {
+	color: darkgreen;
+	}
+	
+/* section */
+.section {
+	text-align: center;
+	margin-bottom: 30px;
+	}
+	
+.left{
+	border: 2px #003300 solid;
+	height: 200px;
+	}
+	
+.middle {
+	border: 2px #003300 solid;
+	height: 200px;
+	}
+	
+.right {
+	border: 2px #003300 solid;
+	height: 200px;
+	}
+	
+	
+	
+/* footer */
+.footer {
+	margin-bottom: 40px;
+	}
+	
+.navbar-fixed-bottom, .navbar-fixed-bottom a, #navbar-menu li{
+	color: darkgreen;
+	text-align: center;
+	display: inline-block;
+	padding-left: 20px;
+	padding-right: 20px;
+	}
+	
