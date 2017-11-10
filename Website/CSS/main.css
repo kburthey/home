@@ -1,0 +1,80 @@
+html, body {
+	font-family: 'Ubuntu Condensed', sans-serif;
+	background: black;
+	}
+	
+.active {
+	font-size: 24px;
+	text-decoration: underline;
+	}
+	
+.container {
+	max-width: 1060px;
+	}
+	
+/* header */
+.header {
+	color: white;
+	background: black;
+	padding: 20px;
+	font-family: 'Ubuntu Condensed', sans-serif;
+	border-bottom: 1px grey solid;	
+	}
+	
+.header li {
+	display: inline-block;
+	margin-top: 20px;
+	}
+	
+.header a, .footer a {
+	color:grey;
+	font-weight: bold;
+	}
+	
+.header h1 a {
+	color: white;
+	text-decoration: none;
+	}
+
+	
+/* jumbotron */
+.jumbotron {
+	background-image:url("../images/bwbuilding.jpg");
+	background-size: cover;
+	height: 760px;
+	color: white;
+	margin: 0;
+	}
+	
+/* main */
+.main {
+	height: 760px;
+	background: black;
+	text-align: center;
+	color: white;
+	}
+	
+.right {
+	padding-top: 50px;
+	}
+	
+#contact {
+	padding-top: 50px;
+	font-size:  50px;
+	}
+	
+	
+/* footer */
+.footer {
+	background: black;
+	color: white;
+	text-align: center;
+	padding: 20px;
+	margin: 0;
+	border-top: 1px grey solid;
+	}
+	
+.footer li {
+	display: inline-block;
+	}
+	
