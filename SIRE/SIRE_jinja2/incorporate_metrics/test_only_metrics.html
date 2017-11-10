@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>None</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.1/crossfilter.min.js"></script>
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.31/dc.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.3.2/js/dataTables.colReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.31/dc.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.3.2/css/colReorder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.0/css/select.dataTables.min.css">
+            <style>
+    a {color: blue;}
+    a.toggle-vis-metrics.active {color :purple;}
+    a.toggle-vis-metrics.visited {color : blue;}
+    .select-info {
+        visibility : hidden;
+    }
+    #scaffoldContiguity-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #assemblyBases-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #customMetrics-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }            </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="list-group" id="toc">
+            <li class="list-group-item active">
+                <h2 class="list-group-item-heading">Table of Contents</h2>
+            </li>
+<li class="list-group-item">
+            <a href="#results">Results</a>
+        </li>
+        </div>
+    </div>
+            <a name="results"></a>
+            <div class="container-fluid">
+                <div class="list-group" id="results">
+                    <li class="list-group-item active">
+                        <h2 class="list-group-item-heading">Results</h2>
+                    </li>
+                            <h3 class="list-group-item" align="center"><b><u>FASTA Metrics Table</u></b></h3>
+                            <li class="list-group-item">
+                                <div style="margin-top:0.5em;margin-bottom:0.5em">
+                                    <b>Toggle Column:</b>
+    <a class="toggle-vis-metrics" data-column="Assembly Name">Assembly Name</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Species">Species</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Size">Size</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Scaffolds">Scaffolds</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Bases in Scaffolds">Bases in Scaffolds</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Scaffold N50">Scaffold N50</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Scaffold N90">Scaffold N90</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Max Scaffold">Max Scaffold</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Min Scaffold">Min Scaffold</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Contigs">Contigs</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Bases in Contigs">Bases in Contigs</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Contig N50">Contig N50</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Contig N90">Contig N90</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Max Contig">Max Contig</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Min Contig">Min Contig</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Gaps">Gaps</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Bases in Gaps">Bases in Gaps</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Gap N50">Gap N50</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Max Gap">Max Gap</a>
+ /
+    <a class="toggle-vis-metrics" data-column="Min Gap">Min Gap</a>
+ /
+                                </div>
+                                <table class="table table-striped table-bordered" id="metrics-datatable"></table>
+                                <button id="filter-metrics">Filter Table Rows</button>
+                                <button id="reset-metrics">RESET ALL</button>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Scaffold N50 for Assemblies</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="scaffoldContiguity-chart"></span>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Assembly Bases by Type</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="assemblyBases-chart"></span>
+                            </li>
+                </div>
+            </div>
+</body>
+    <script>
+var color_anchors = function(t){
+    if (t.hasClass('active')){
+        t.removeClass('active');
+        t.addClass('visited');
+    } else {
+        t.removeClass('visited');
+        t.addClass('active');
+    }
+};    </script>
+            <script>
+                var assembly_metrics = crossfilter([{"contigs": 12776, "assembly_name": "DAN1002A1", "min_gap": 0, "contig_N90": 80642, "gap_length": 0, "assembly_gc": 34.58, "contig_N50": 307735, "scaffold_length": 0, "gap_N50": 0, "max_gap": 0, "scaffold_N50": 307735, "gaps": 0, "Size": "2Gb", "min_scaffold": 8, "max_contig": 2842410, "contig_length": 1796186821, "max_scaffold": 2842410, "scaffolds": 12776, "min_contig": 2, "scaffold_N90": 0, "Species": "Tomentella"}, {"contigs": 12776, "assembly_name": "DAN870_A1_scaffolds", "min_gap": 0, "contig_N90": 80642, "gap_length": 0, "assembly_gc": 34.58, "contig_N50": 307735, "scaffold_length": 0, "gap_N50": 0, "max_gap": 0, "scaffold_N50": 307735, "gaps": 0, "Size": "2Gb", "min_scaffold": 8, "max_contig": 2842410, "contig_length": 1796186821, "max_scaffold": 2842410, "scaffolds": 12776, "min_contig": 80000, "scaffold_N90": 0, "Species": "Clandestina"}, {"contigs": 12776, "assembly_name": "DAN870_A2_scaffolds", "min_gap": 0, "contig_N90": 80642, "gap_length": 0, "assembly_gc": 34.58, "contig_N50": 307735, "scaffold_length": 0, "gap_N50": 0, "max_gap": 0, "scaffold_N50": 307735, "gaps": 0, "Size": "2Gb", "min_scaffold": 8, "max_contig": 2842410, "contig_length": 1796186821, "max_scaffold": 2842410, "scaffolds": 12776, "min_contig": 8, "scaffold_N90": 0, "Species": "Microphylla"}]);
+                var assembly_header = [{"title": "Assembly Name"}, {"title": "Species"}, {"title": "Size"}, {"title": "Scaffolds"}, {"title": "Bases in Scaffolds"}, {"title": "Scaffold N50"}, {"title": "Scaffold N90"}, {"title": "Max Scaffold"}, {"title": "Min Scaffold"}, {"title": "Contigs"}, {"title": "Bases in Contigs"}, {"title": "Contig N50"}, {"title": "Contig N90"}, {"title": "Max Contig"}, {"title": "Min Contig"}, {"title": "Gaps"}, {"title": "Bases in Gaps"}, {"title": "Gap N50"}, {"title": "Max Gap"}, {"title": "Min Gap"}];
+                var assembly_data_table = [["DAN1002A1", "Tomentella", "2Gb", 12776, 0, 307735, 0, 2842410, 8, 12776, 1796186821, 307735, 80642, 2842410, 2, 0, 0, 0, 0, 0], ["DAN870_A1_scaffolds", "Clandestina", "2Gb", 12776, 0, 307735, 0, 2842410, 8, 12776, 1796186821, 307735, 80642, 2842410, 80000, 0, 0, 0, 0, 0], ["DAN870_A2_scaffolds", "Microphylla", "2Gb", 12776, 0, 307735, 0, 2842410, 8, 12776, 1796186821, 307735, 80642, 2842410, 8, 0, 0, 0, 0, 0]];
+$(document).ready(function(){
+    var acount = 0;
+    var scount = 0;
+    var name_length = 0;
+    var assemblyMetrics = assembly_metrics.dimension(function(d){
+        acount++;
+        if (d.assembly_name.length > name_length){
+            name_length = d.assembly_name.length;
+        }
+        return d.assembly_name;
+    });
+    var left_margin = name_length * 5 + 20;
+    var bottom_margin = name_length * 4 + 10;
+    var wa = acount * 30 + left_margin + 60;
+    var assemblyMetricsTable = $('#metrics-datatable').dataTable({
+        "data": assembly_data_table,
+        "columns": assembly_header,
+        "colReorder" : {
+            fixedColumnsLeft: 1
+        },
+        "search": {
+            "caseInsensitive": true,
+            "regex": true
+        },
+        "select" : true
+    });
+    var scaffoldContiguity = dc.barChart("#scaffoldContiguity-chart");
+    var scaffold_N50 = assemblyMetrics.group().reduceSum(function(d){
+        return d.scaffold_N50;
+    });
+    scaffoldContiguity
+        .width(wa)
+        .height(600)
+        .dimension(assemblyMetrics)
+        .margins({top: 50, right: 50, bottom: bottom_margin, left: left_margin})
+        .colors('green')
+        .group(scaffold_N50, "Scaffold N50")
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .xAxisLabel("Assembly Identifier")
+        .yAxisLabel("Scaffold N50")
+        .transitionDuration(10)
+        .legend((dc.legend().x(120).y(0).itemHeight(16).gap(4)))
+        .on('renderlet', function(chart){
+        chart.selectAll('rect').on('click.custom', function(d){
+            var chartI = dc.chartRegistry.list('assemblymetrics_group');
+            var table = $('#metrics-datatable').DataTable();
+            var rows = $("#metrics-datatable").dataTable()._('tr');
+            for (var r = 0; r < rows.length; r++){
+                if (rows[r][0] === d.x){
+                    var indexes = table.rows().eq( 0 ).filter( function (rowIdx) {
+                        return table.cell( rowIdx, 0 ).data() === d.x ? true : false;
+                    });
+                    if (table.rows(indexes).nodes().to$().hasClass('selected') === false){
+                        table.rows(indexes)
+                             .nodes()
+                             .to$()
+                             .addClass('selected');
+                        console.log(rows[r], indexes);
+                    } else {
+                        table.rows(indexes)
+                             .nodes()
+                             .to$()
+                             .removeClass('selected');
+                    }
+                }
+            }
+            for (var i = 0; i < chartI.length; i++) {
+                if (chartI[i].chartName !== 'scaffoldcontiguity'){
+                    chartI[i].filter(d.x);
+                    console.log(chartI[i].chartName);
+                }
+            }
+            dc.renderAll();
+            console.log(d.x + "thing" + chartI);
+        });	
+    });
+    scaffoldContiguity.chartName = 'scaffoldcontiguity';
+    dc.chartRegistry.register(scaffoldContiguity, 'assemblymetrics_group');
+
+    var assemblyBases = dc.barChart("#assemblyBases-chart");
+    var contig_bases = assemblyMetrics.group().reduceSum(function(d){
+        return d.contig_length;
+    });
+    var gap_bases = assemblyMetrics.group().reduceSum(function(d){
+        return d.gap_length;
+    });
+    assemblyBases
+        .width(wa)
+        .height(600)
+        .dimension(assemblyMetrics)
+        .margins({top: 50, right: 50, bottom: bottom_margin, left: left_margin})
+        .title(function(d){
+            return d.key + ' ' + this.layer + ' ' + d.value;
+        })
+        .group(contig_bases, "Bases in Contigs")
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .xAxisLabel("Assembly Identifier")
+        .yAxisLabel("Assembly Bases")
+        .stack(gap_bases, "Bases in Gaps")
+        .transitionDuration(10)
+        .legend((dc.legend().x(120).y(0).itemHeight(16).gap(4)))
+        .on('renderlet', function(chart){
+        chart.selectAll('rect').on('click.custom', function(d){
+            var chartI = dc.chartRegistry.list('assemblymetrics_group');
+            var table = $('#metrics-datatable').DataTable();
+            var rows = $("#metrics-datatable").dataTable()._('tr');
+            for (var r = 0; r < rows.length; r++){
+                if (rows[r][0] === d.x){
+                    var indexes = table.rows().eq( 0 ).filter( function (rowIdx) {
+                        return table.cell( rowIdx, 0 ).data() === d.x ? true : false;
+                    });
+                    if (table.rows(indexes).nodes().to$().hasClass('selected') === false){
+                        table.rows(indexes)
+                             .nodes()
+                             .to$()
+                             .addClass('selected');
+                        console.log(rows[r], indexes);
+                    } else {
+                        table.rows(indexes)
+                             .nodes()
+                             .to$()
+                             .removeClass('selected');
+                    }
+                }
+            }
+            for (var i = 0; i < chartI.length; i++) {
+                if (chartI[i].chartName !== 'assemblybases'){
+                    chartI[i].filter(d.x);
+                    console.log(chartI[i].chartName);
+                }
+            }
+            dc.renderAll();
+            console.log(d.x + "thing" + chartI);
+        });	
+    });
+    assemblyBases.chartName = 'assemblybases';
+    dc.chartRegistry.register(assemblyBases, 'assemblymetrics_group');
+    dc.renderAll();
+
+    $("#reset-metrics").click(function(){
+        var table = $('#metrics-datatable').DataTable();
+        var chartI = dc.chartRegistry.list('assemblymetrics_group');
+        table.rows('.selected').deselect();
+        table.search("").draw();
+        var len = $("#metrics-datatable").dataTable()._('tr').length;
+        var w = len * 30 + left_margin + 60;
+        for (var i = 0; i < chartI.length; i++) {
+            if (chartI[i].chartName === 'scaffoldcontiguity'){
+                var contiguity= assemblyMetrics.group().reduceSum(function(d){
+                    return d.scaffold_N50;
+                });
+                chartI[i].width(w);
+                chartI[i].x(d3.scale.ordinal());
+                chartI[i].group(contiguity, "Scaffold N50");
+                chartI[i].filter(null);
+            }
+            else if (chartI[i].chartName === 'assemblybases') {
+                var contig_bases = assemblyMetrics.group().reduceSum(function(d){
+                    return d.contig_length;
+                });
+                var gap_bases = assemblyMetrics.group().reduceSum(function(d){
+                    return d.gap_length;							
+                });
+                chartI[i].width(w);
+                chartI[i].x(d3.scale.ordinal());
+                chartI[i].group(contig_bases, "Bases in Contigs");
+                chartI[i].stack(gap_bases, "Bases in Gaps")
+                chartI[i].filter(null);
+            }
+        }
+        dc.redrawAll();
+        table.order([0, 'asc']).draw();
+    });
+
+    $('#metrics-datatable tbody').on('click', 'tr', function(){
+        var chartI = dc.chartRegistry.list('assemblymetrics_group');
+        var rows = $('#metrics-datatable').DataTable().rows('.selected').data();
+        console.log($(this)[0].getElementsByTagName('td')[0].innerText);
+        var filtered_samples = assemblyMetrics.top(Infinity);
+        console.log(filtered_samples);
+        for (var j = 0;j<chartI.length; j++){
+            chartI[j].filter(null)
+            for (var i = 0;i<rows.length; i++){
+                chartI[j].filter(rows[i][0]);
+            }
+        }
+        dc.redrawAll();
+    });
+
+    $('#metrics-datatable thead').on('click', 'th', function(){
+        var s = [];
+        var chartI = dc.chartRegistry.list('assemblymetrics_group');
+        var rows = $("#metrics-datatable").dataTable()._('tr', {"filter": "applied"});
+        for (var i = 0;i<rows.length;i++){
+            s.push(rows[i][0]);
+        }
+        for (var i = 0;i<chartI.length; i++){
+            chartI[i].x(d3.scale.ordinal().domain(s));
+        }
+        dc.redrawAll();
+    });
+    $("#metrics-datatable_filter input").on('keyup', function(k){
+        var rows = $("#metrics-datatable").dataTable()._('tr', {"filter": "applied"});
+        var chartI = dc.chartRegistry.list('assemblymetrics_group');
+        var s = [];
+        var r = {};
+        for (var i = 0;i<rows.length;i++){
+            s.push(rows[i][0]);
+            r[rows[i][0]] = 1;
+        }
+        for (var i = 0;i<chartI.length; i++){
+            if (chartI[i].chartName === 'scaffoldcontiguity'){
+                var contiguity_filter = assemblyMetrics.group().reduceSum(function(d){
+                    if (r[d.assembly_name] === 1){
+                        return d.scaffold_N50;
+                    }
+                });
+                var len = rows.length;
+                wa = (len * 30) + left_margin + 60;
+                chartI[i].width(wa);
+                chartI[i].x(d3.scale.ordinal().domain(s));
+                chartI[i].group(contiguity_filter, "Scaffold N50");
+            }
+            else if (chartI[i].chartName === 'assemblybases') {
+                var contig_bases_filter = assemblyMetrics.group().reduceSum(function(d){
+                    if (r[d.assembly_name] === 1){
+                        return d.contig_length;
+                    }
+                });
+                var gap_bases_filter = assemblyMetrics.group().reduceSum(function(d){
+                    if (r[d.assembly_name] === 1){
+                        return d.gap_length;
+                    }
+                });
+                var len = rows.length;
+                wa = (len * 30) + left_margin + 60;
+                chartI[i].width(wa);
+                chartI[i].x(d3.scale.ordinal().domain(s));
+                chartI[i].group(contig_bases_filter, "Bases in Contigs");
+                chartI[i].stack(gap_bases_filter, "Bases in Gaps")
+            }
+        }
+        dc.renderAll();
+    });
+
+    $("#filter-metrics").click(function(d){
+        var searchstr = "";
+        var s = [];
+        var r = {};
+        var rows = $('#metrics-datatable').DataTable().rows('.selected').data();
+        var table = $('#metrics-datatable').DataTable();
+        var chartI = dc.chartRegistry.list('assemblymetrics_group');
+        if (rows.length === 0){
+            return 0
+        }
+        for (var i=0;i<rows.length;i++){
+            s.push(rows[i][0]);
+            r[rows[i][0]] = 1;
+            if (searchstr.length < 1){
+                searchstr = rows[i][0] + '[^\\S+]';
+            } else {
+                searchstr += "|" + rows[i][0] + '[^\\S+]';
+            }
+        }
+        table.search(searchstr, 1, true, false).draw();
+        for (var i = 0;i<chartI.length; i++){
+            if (chartI[i].chartName === 'scaffoldcontiguity'){
+                var contiguity_filter = assemblyMetrics.group().reduceSum(function(d){
+                    if (r[d.assembly_name] === 1){
+                        return d.scaffold_N50;
+                    }
+                });
+                var len = rows.length;
+                wa = (len * 30) + left_margin + 60;
+                chartI[i].width(wa);
+                chartI[i].x(d3.scale.ordinal().domain(s));
+                chartI[i].group(contiguity_filter, "Scaffold N50");
+                chartI[i].filter(null);
+            }
+            else if (chartI[i].chartName === 'assemblybases') {
+                var contig_bases_filter = assemblyMetrics.group().reduceSum(function(d){
+                    if (r[d.assembly_name] === 1){
+                        return d.contig_length;
+                    }
+                });
+                var gap_bases_filter = assemblyMetrics.group().reduceSum(function(d){
+                    if (r[d.assembly_name] === 1){
+                        return d.gap_length;
+                    }
+                });
+                var len = rows.length;
+                wa = (len * 30) + left_margin + 60;
+                chartI[i].width(wa);
+                chartI[i].x(d3.scale.ordinal().domain(s));
+                chartI[i].group(contig_bases_filter, "Bases in Contigs");
+                chartI[i].stack(gap_bases_filter, "Bases in Gaps");
+                chartI[i].filter(null);
+            }
+        }
+        table.rows('.selected').deselect();
+        dc.renderAll();
+    });
+
+    $('a.toggle-vis-metrics').on('click', function(e){
+        e.preventDefault();
+        var column = $("#metrics-datatable").DataTable().column(':contains(' + $(this).attr('data-column') + ')');
+        column.visible(! column.visible());
+        color_anchors($(this));
+    });
+});            </script>
+</html>

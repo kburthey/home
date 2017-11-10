@@ -1,0 +1,8 @@
+{% extends "templates/css.jinja" %}
+{% block study_header %}
+    {% if data.study_id %}
+        <li class="list-group-item">Study ID: {{ data.study_id }}</li>
+        <li class="list-group-item">Analyst: {{ data.analyst }}</li>
+        <li class="list-group-item">Description: {{ data.description }}</li>
+    {% endif %}
+{% endblock %}            

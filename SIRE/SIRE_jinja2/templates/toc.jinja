@@ -1,0 +1,8 @@
+{% extends "templates/study_header.jinja" %}
+{% block toc %}
+    {% for section in data.toc -%}
+        <li class="list-group-item">
+            <a href="#{{ section.label.lower() }}">{{ section.label }}</a>
+        </li>
+    {% endfor %}
+{% endblock %}            

@@ -1,0 +1,4 @@
+{"metrics_targets" : [
+{"assembly_name" : "DAN1002A1", "directory" : "/home/analysis/ctc/dev/SMRT/SMRT_jinja2/incorporate_metrics/DAN1002A1", "Size" : "2Gb", "Species" : "Tomentella"},
+{"assembly_name" : "DAN870_A1_scaffolds", "directory" : "/home/analysis/ctc/dev/SMRT/SMRT_jinja2/incorporate_metrics/DAN870_A1_scaffolds", "Size" : "2Gb", "Species" : "Clandestina"},
+{"assembly_name" : "DAN870_A2_scaffolds", "directory" : "/home/analysis/ctc/dev/SMRT/SMRT_jinja2/incorporate_metrics/DAN870_A2_scaffolds", "Size" : "2Gb", "Species" : "Microphylla"}]}

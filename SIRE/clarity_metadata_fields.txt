@@ -1,0 +1,3 @@
+col 41 Clarity ID
+col 30 Genotype
+col ? parents

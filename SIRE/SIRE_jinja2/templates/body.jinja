@@ -1,0 +1,127 @@
+{% extends "templates/toc.jinja" %}
+{% macro toggle_columns(column) %}
+    <a class="toggle-vis-aln" data-column="{{ column|e }}">{{ column|e }}</a>
+{% endmacro %}
+{% macro toggle_metrics_columns(column) %}
+    <a class="toggle-vis-metrics" data-column="{{ column|e }}">{{ column|e }}</a>
+{% endmacro %}
+{% block body %}
+    {% for section in data.toc -%}
+        {% if section.label.lower() is equalto "summary" %}
+            <a name="{{ section.label.lower() }}"></a>
+            <div class="container-fluid">
+                <div class="list-group" id="summary">
+                    <li class="list-group-item active">
+                        <h2 class="list-group-item-heading">Summary</h2>
+                    </li>
+                    <li class="list-group-item">{{ data.summary.text|safe }}</li>
+                </div>
+            </div>
+        {% endif %}
+        {% if section.label.lower() is equalto "references" %}
+            <a name="{{ section.label.lower() }}"></a>
+            <div class="container-fluid">
+                <div class="list-group" id="references">
+                    <li class="list-group-item active">
+                        <h2 class="list-group-item-heading">References</h2>
+                    </li>
+                    {% for ref in data.references -%}
+                        <li class="list-group-item">{{ ref }}</li>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        {% if section.label.lower() is equalto "methods" %}
+            <a name="{{ section.label.lower() }}"></a>
+            <div class="container-fluid">
+                <div class="list-group" id="methods">
+                    <li class="list-group-item active">
+                        <h2 class="list-group-item-heading">Methods</h2>
+                    </li>
+                    <li class="list-group-item">{{ data.methods.text|safe }}</li>
+                </div>
+            </div>
+        {% endif %}
+        {% if section.label.lower() is equalto "conclusion" %}
+            <a name="{{ section.label.lower() }}"></a>
+            <div class="container-fluid">
+                <div class="list-group" id="conclusion">
+                    <li class="list-group-item active">
+                        <h2 class="list-group-item-heading">Conclusion</h2>
+                    </li>
+                    <li class="list-group-item">{{ data.conclusion.text|safe }}</li>
+                </div>
+            </div>
+        {% endif %}
+        {% if section.label.lower() is equalto "results" %}
+            <a name="{{ section.label.lower() }}"></a>
+            <div class="container-fluid">
+                <div class="list-group" id="results">
+                    <li class="list-group-item active">
+                        <h2 class="list-group-item-heading">Results</h2>
+                    </li>
+                    {% for r in data.results -%}
+                        {% if r.type is equalto "metrics" %}
+                            <h3 class="list-group-item" align="center"><b><u>FASTA Metrics Table</u></b></h3>
+                            <li class="list-group-item">
+                                <div style="margin-top:0.5em;margin-bottom:0.5em">
+                                    <b>Toggle Column:</b>
+                                    {% for h in r.header -%}
+                                        {{ toggle_metrics_columns(h.title) }} /
+                                    {% endfor %}
+                                </div>
+                                <table class="table table-striped table-bordered" id="metrics-datatable"></table>
+                                <button id="filter-metrics">Filter Table Rows</button>
+                                <button id="reset-metrics">RESET ALL</button>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Scaffold N50 for Assemblies</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="scaffoldContiguity-chart"></span>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Assembly Bases by Type</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="assemblyBases-chart"></span>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>BUSCOs by Type</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="buscoComplete-chart"></span>
+                            </li>
+                        {% elif r.type is equalto "anv" %}
+                            <h3 class="list-group-item" align="center"><u><b>Table 1 - Alignment and Variant Table</b></u></h3>
+                            <li class="list-group-item">
+                                <div style="margin-top:0.5em;margin-bottom:0.5em">
+                                    <b>Toggle Column:</b>
+                                    {% for h in r.header -%}
+                                        {{ toggle_columns(h.title) }} /
+                                    {% endfor %}
+                                </div>
+                                <table class="table table-striped table-bordered" id="anv-datatable"></table>
+                                <button id="filter-anv">Filter Table Rows</button>
+                                <button id="reset-anv">RESET ALL</button>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Figure 1 - Sample Alignments by Type</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="anvalign-chart"></span>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Figure 2 - Sample Variants by Type</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="anvbytype-chart"></span>
+                            </li>
+                            <h3 class="list-group-item" align="center"><u><b>Figure 3 - Sample Variants by Allele</b></u></h3>
+                            <li class="list-group-item">
+                                <span id="varbytype-chart"></span>
+                            </li>
+                        {% else %}
+                            <b>ERROR: cannot support type {{ r.type }}</b>
+                        {% endif %}
+                    {% endfor %}
+                    {% for r in data.additional_figures -%}
+                        <h3 class="list-group-item" align = "center"><u><b>Figure {{ r.figure_number }} - {{ r.name }}</u></b></h3>
+                        <img src="{{ r.image_path }}" alt="BORKEN" align = "center">
+                        <li class="list-group-item">{{ r.description }}</li>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

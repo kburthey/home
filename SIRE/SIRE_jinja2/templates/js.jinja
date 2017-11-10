@@ -1,0 +1,23 @@
+{% extends "templates/body.jinja" %}
+{% block javascript %}
+    <script>
+        {% include 'js/color_anchors.js' %}
+    </script>
+    {% for t in data.results -%}
+        {% if t.type is equalto "metrics" %}
+            <script>
+                var assembly_metrics = crossfilter({{ t.json_data }});
+                var assembly_header = {{ t.json_header }};
+                var assembly_data_table = {{ t.json_table_data }};
+                {% include 'js/metrics.js' %}
+            </script>
+        {% elif t.type is equalto "anv" %}
+            <script>
+                var anvData = crossfilter({{ t.json_data }});
+                var anv_header = {{ t.json_header }};
+                var anv_table_data = {{ t.json_table_data }};
+                {% include 'js/anv.js' %}
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endblock %}            

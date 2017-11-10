@@ -1,0 +1,14 @@
+{% extends "templates/main.jinja" %}
+{% block css %}
+    {% for t in data.results -%}
+        {% if t.type is equalto "metrics" %}
+            <style>
+                {% include 'css/metrics.css' %}
+            </style>
+        {% elif t.type is equalto "anv" %}
+            <style>
+                {% include 'css/anv.css' %}
+            </style>
+        {% endif %}
+    {% endfor %}
+{% endblock %}            

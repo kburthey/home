@@ -1,0 +1,24 @@
+#TITLE: Basic Assembly Stats
+#Name | No_Name
+Assembler | None_Given
+Contigs | 12,776
+Max Contig | 2,842,410
+Min Contig | 80000
+Mean Contig | 140,591
+Contig N50 | 307,735
+Contig N90 | 80,642
+Total Contig Length | 1,796,186,821
+Assembly GC | 34.58
+Scaffolds | 12,776
+Max Scaffold | 2,842,410
+Min Scaffold | 8
+Mean Scaffold | 14,059
+Scaffold N50 | 307,735
+Scaffold N90 | 80,642
+Total Scaffold Length | 1,796,186,821
+Captured Gaps | 0
+Max Gap | 0
+Min Gap | 0
+Mean Gap | 0
+Gap N50 | 0
+Total Gap Length | 0

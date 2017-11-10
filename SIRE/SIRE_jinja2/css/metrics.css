@@ -1,0 +1,26 @@
+    a {color: blue;}
+    a.toggle-vis-metrics.active {color :purple;}
+    a.toggle-vis-metrics.visited {color : blue;}
+    .select-info {
+        visibility : hidden;
+    }
+    #scaffoldContiguity-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #assemblyBases-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #customMetrics-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #buscoComplete-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }

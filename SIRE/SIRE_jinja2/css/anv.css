@@ -1,0 +1,31 @@
+    a {color: blue;}
+    a.toggle-vis-aln.active {color :purple;}
+    a.toggle-vis-aln.visited {color : blue;}
+    .select-info {
+        visibility : hidden;
+    } 
+    #vcfdepth-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #anvbytype-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #varbytype-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #anvalign-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
+    #aln-chart .x.axis text {
+        text-anchor: end !important;
+        font-weight: bold;
+        transform: rotate(-30deg);
+    }
