@@ -61,8 +61,8 @@ except ValueError:
 if low_limit > upper_limit:
     print("Lower limit must be greater than upper limit")
     sys.exit(0)
-high_file = open(out + infile + "_filtered_reads_over_" + str(upper_limit) + ".fa", "w")
-low_file = open(out + infile + "_filtered_reads_below_" + str(low_limit) + ".fa", "w")
+high_file = open("%s%s_filtered_reads_over_%s.fa" % (out, infile, upper_limit), "w")
+low_file = open("%s%s_filtered_reads_below_%s.fa" % (out, infile, low_limit), "w")
 
 
 #loop through each read and compare read length to upper and lower limits
@@ -95,7 +95,7 @@ high_file.close()
 meta_page['A2'] = str(infile)
 meta_page['B2'] = int(low_limit)
 meta_page['C2'] = int(upper_limit)
-meta_page['D2'] = infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit) + ".fa"
+meta_page['D2'] = "%s_filtered_%s_%s.fa" % (infile, low_limit, upper_limit)
 
 
 #compile dictionary of read lengths by increment
@@ -176,4 +176,4 @@ pprint("High reads: " + str(len(high_count)))
 
 
 #save metadata to ouput file
-meta.save(out + infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit) + "_metadata.xlsx")
+meta.save("%s%s_filtered_%s_%s_metadata.xlsx" % (out, infile, low_limit, upper_limit))
