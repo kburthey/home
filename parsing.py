@@ -15,13 +15,13 @@ from pprint import pprint
 #Declare argparse variables
 parser = ArgumentParser()
 parser.add_argument("-i", "--infile", dest="infile",
-                    help="read in fasta data")
+                    help="fasta file to read in data")
 parser.add_argument("-o", "--out", dest="out",
                     help="outfile directory location for metadata and filtered reads")
 parser.add_argument("-l", "--low", dest="lower_limit", default=1000, type=int,
-                    help="read count lower limit. Default: 1000")
+                    help="Enter a lower limit read count filter. Default: 1000")
 parser.add_argument("-u", "--upper", dest="upper_limit", default=2700, type=int,
-                    help="read count upper limit. Default: 2700")
+                    help="Enter an upper limit read count filter. Default: 2700")
 args = parser.parse_args()
 print(args)
 
@@ -38,6 +38,10 @@ meta_page['D1'] = "outfile"
 #Global variables
 infile = os.path.basename(args.infile)
 out = args.out
+if os.path.exists(out):
+    True
+else:
+    os.mkdir(out)
 low_count = {}
 low_reads = []
 normal_count = {}
@@ -48,14 +52,18 @@ results = {}
 steps = []
 groups = []
 highest = 0
-high_file = open(out + infile + "_list_high_reads.txt", "w")
-low_file = open(out + infile + "_list_low_reads.txt", "w")
 try:
     low_limit = int(args.lower_limit)
     upper_limit = int(args.upper_limit)
 except ValueError:
     print("lower and upper limits must be integers")
     sys.exit(0)
+if low_limit > upper_limit:
+    print("Lower limit must be greater than upper limit")
+    sys.exit(0)
+high_file = open(out + infile + "_filtered_reads_over_" + str(upper_limit) + ".fa", "w")
+low_file = open(out + infile + "_filtered_reads_below_" + str(low_limit) + ".fa", "w")
+
 
 #loop through each read and compare read length to upper and lower limits
 records = list(SeqIO.parse(infile, "fasta"))
@@ -65,12 +73,12 @@ with open(out + infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit) 
             low_count[records[i].id] = len(records[i].seq)
             ##records[i].id = records[i].id + "_filtered"
             low_reads.append(records[i])
-            low_file.write('ID:%s Total:%s\n' % (records[i].id, len(records[i].seq)))
+            low_file.write('>%s\n%s\n' % (records[i].id, records[i].seq))
         elif len(records[i].seq) >= upper_limit:
             high_count[records[i].id] = len(records[i].seq)
             ##records[i].id = records[i].id + "_filtered"
             high_reads.append(records[i])
-            high_file.write('ID:%s Total:%s\n' % (records[i].id, len(records[i].seq)))
+            high_file.write('>%s\n%s\n' % (records[i].id, records[i].seq))
             if len(records[i].seq) >= highest:
                 highest = len(records[i].seq)
         else:
@@ -79,14 +87,15 @@ with open(out + infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit) 
             normal_reads.append(records[i])
             target.write('>%s\n' % records[i].id)
             target.write('%s\n' % records[i].seq)
-
 low_file.close()
 high_file.close()
+
+
 #metadata information
 meta_page['A2'] = str(infile)
 meta_page['B2'] = int(low_limit)
 meta_page['C2'] = int(upper_limit)
-meta_page['D2'] = infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit)
+meta_page['D2'] = infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit) + ".fa"
 
 
 #compile dictionary of read lengths by increment
@@ -102,18 +111,19 @@ for j in range(0, len(steps)):
     for i in range(0, len(records)):
         if len(records[i].seq) >= steps[j] and len(records[i].seq) <= (steps[j]+99):
             results[groups[j] + "-" + (str(j)+ "99")]['Total'] += int(1)
-results.setdefault("2800+", {'Total':0})
+results.setdefault("2800-", {'Total':0})
 mid = int(highest/10)
 for j in range(1,11):
-    results.setdefault(str(2800 + (mid * j)) + "+", {'Total':0})
+    results.setdefault(str(2800 + (mid * j)) + "-", {'Total':0})
     for i in range(0, len(records)):
         if len(records[i].seq) >= 2800 + (mid * j) and len(records[i].seq) <= 2800 + (mid * (j +1)):
-            results[str(2800 + (mid * j)) + "+"]['Total'] += int(1)
+            results[str(2800 + (mid * j)) + "-"]['Total'] += int(1)
 for i in range(0, len(records)):
     if len(records[i].seq) >2800 and len(records[i].seq) < 2800 + (highest/10):
-        results['2800+']['Total'] += int(1)
+        results['2800-']['Total'] += int(1)
 
-#create result sheet in excel metadata workbook
+
+#create result sheets in excel metadata workbook
 meta_result = meta.create_sheet(index=1, title="Result Data")
 meta_result['A1'] = "ID"
 meta_result['B1'] = "Interval"
@@ -122,10 +132,28 @@ for i, (key, value) in enumerate(results.items()):
     meta_result['A' + str(i+2)] = i
     meta_result['B' + str(i+2)] = key
     meta_result['C' + str(i+2)] = value['Total']
+meta_result_normal = meta.create_sheet(index=2, title="Normal Reads")
+meta_result_normal['A1'] = "ID"
+meta_result_normal['B1'] = "Read Count"
+for i, (key, value) in enumerate(normal_count.items()):
+    meta_result_normal['A' + str(i+2)] = key
+    meta_result_normal['B' + str(i+2)] = int(value)
+meta_result_high = meta.create_sheet(index=3, title="High Reads")
+meta_result_high['A1'] = "ID"
+meta_result_high['B1'] = "Read Count"
+for i, (key, value) in enumerate(high_count.items()):
+    meta_result_high['A' + str(i+2)] = key
+    meta_result_high['B' + str(i+2)] = int(value)
+meta_result_low = meta.create_sheet(index=4, title="Low Reads")
+meta_result_low['A1'] = "ID"
+meta_result_low['B1'] = "Read Count"
+for i, (key, value) in enumerate(low_count.items()):
+    meta_result_low['A' + str(i+2)] = key
+    meta_result_low['B' + str(i+2)] = int(value)
 
 #Generate Chart with read length increment data
-data = openpyxl.chart.Reference(meta_result, min_col=3, min_row=1, max_row=(len(steps) +2))
-titles = openpyxl.chart.Reference(meta_result, min_col=2, min_row=2, max_row=(len(steps) +2))
+data = openpyxl.chart.Reference(meta_result, min_col=3, min_row=1, max_row=(len(steps) +1))
+titles = openpyxl.chart.Reference(meta_result, min_col=2, min_row=2, max_row=(len(steps) +1))
 chart = BarChart()
 chart.style = 11
 chart.type = 'bar'
@@ -133,6 +161,7 @@ chart.title = "Read Count by Grouping"
 chart.add_data(data=data, titles_from_data=True)
 chart.set_categories(titles)
 meta_result.add_chart(chart, 'E2')
+
 
 #print results to console
 print("Total Read Count:" + str(len(records)))
@@ -145,5 +174,6 @@ pprint("Normal reads: " + str(len(normal_count)))
 pprint("High reads: " + str(len(high_count)))
 ##pprint(high_count)
 
-#save data to ouput files. windows then linux
+
+#save metadata to ouput file
 meta.save(out + infile + "_filtered_" + str(low_limit) + "_" + str(upper_limit) + "_metadata.xlsx")
